@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wordpress REST API V3 Example in Javascript</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">
+            <br> التواصل مع واجهة 
+            <br>  RSEST API 
+            <br>  لموقع ووردبريس
+        </h1>
+        <form id="form">
+            <div class="form-group container">
+            <label for="url">عنوان الموقع</label>
+            <input type="text" class="form-control" name="" id="url" placeholder="Enter Wordpress Website URL" required>
+            </div>
+            <div class="form-group container">
+                <label for="number">عدد المقالات المطلوب جلبها</label>
+                <input type="number" class="form-control" value="20" id="number" required>
+            </div>
+            <div class="form-group container">
+                <button class="btn btn-info btn-block">
+                    ابدأ بجلب المقالات
+                </button>
+            </div>
+        </form>
+        <div id="result">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>عنوان المقال</th>
+                        <th>تاريخ النشر</th>
+                    </tr>
+                </thead>
+                <tbody id="data">
+ 
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $("#form").submit((e) => {
+        e.preventDefault()
+ 
+        var url = $("#url").val()
+ 
+        var number = $("#number").val()
+ 
+        getBlogPosts(url,number)
+    })
+ 
+    $("#number").change((e) => {
+        number = $(this).val()
+    })
+ 
+    function getBlogPosts(url,number){
+        $("#data").html('')
+        $.ajax({
+            method:"GET",
+            url:`https://${url}/wp-json/wp/v2/posts?_fields[]=title&_fields[]=link&_fields[]=date&per_page=${number}`,
+            success:function(data){
+                console.log(data)
+ 
+                data.forEach(post => {
+                    $("#data").append(`
+                    
+                    <tr>
+                        <td><a href="${post.link}" target="_blank">${post.title.rendered}</a></td>
+                        <td>${post.date}</td>
+                        </tr>
+                    
+                    `)
+                });
+            }
+        })
+    }
+</script>
+</html>
